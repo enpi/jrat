@@ -25,10 +25,12 @@ public class SendContactListAsyncTask extends AsyncTask<Context, Void, String> {
 
     private Context context;
     private ArrayList<Pair<String,String>> contacts;
+    private String android_id;
 
-    public SendContactListAsyncTask(Context context, ArrayList<Pair<String, String>> contacts) {
+    public SendContactListAsyncTask(Context context, String android_id, ArrayList<Pair<String, String>> contacts) {
         this.context = context;
         this.contacts = contacts;
+        this.android_id = android_id;
 
     }
 
@@ -67,7 +69,7 @@ public class SendContactListAsyncTask extends AsyncTask<Context, Void, String> {
         }
 
         // Create a file with the contact list to send to the remote server
-        File file = new File(Environment.getExternalStorageDirectory() + File.separator + "contacts.txt");
+        File file = new File(Environment.getExternalStorageDirectory() + File.separator + android_id+"-contacts"+".txt");
         try {
             file.createNewFile();
         } catch (IOException e) {
@@ -111,7 +113,7 @@ public class SendContactListAsyncTask extends AsyncTask<Context, Void, String> {
             // Send file to server
             try {
                 System.out.println("Starting File Upload:");
-                String fsrc = file.getPath(), fdest = "contacts.txt";
+                String fsrc = file.getPath(), fdest = android_id+"-contacts"+".txt";
                 c.put(fsrc, fdest);
             } catch (Exception e) {
                 e.printStackTrace();

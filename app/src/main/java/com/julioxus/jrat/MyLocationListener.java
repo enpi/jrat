@@ -18,9 +18,12 @@ import java.util.Locale;
 public class MyLocationListener implements LocationListener {
 
     Context context;
+    String android_id;
 
-    MyLocationListener(Context context){
+    MyLocationListener(Context context, String android_id){
         this.context = context;
+        this.android_id = android_id;
+
     }
 
     @Override
@@ -50,7 +53,7 @@ public class MyLocationListener implements LocationListener {
         String s = longitude + "\n" + latitude + "\n\nMy Current City is: "
                 + cityName;
 
-        new SendGeoLocationAsyncTask(context,latitude,longitude, cityName).execute();
+        new SendGeoLocationAsyncTask(context, android_id, latitude,longitude, cityName).execute();
     }
 
     @Override

