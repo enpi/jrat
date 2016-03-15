@@ -26,6 +26,7 @@ public class MyLocationListener implements LocationListener {
 
     }
 
+    //Handler that will execute each time that the location of the user changes
     @Override
     public void onLocationChanged(Location loc) {
         Toast.makeText(
@@ -53,6 +54,7 @@ public class MyLocationListener implements LocationListener {
         String s = longitude + "\n" + latitude + "\n\nMy Current City is: "
                 + cityName;
 
+        //Send location data to the remote server
         new SendGeoLocationAsyncTask(context, android_id, latitude,longitude, cityName).execute();
     }
 

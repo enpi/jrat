@@ -19,7 +19,7 @@ public class CreateRMIServerAsyncTask extends AsyncTask{
 
     @Override
     protected Object doInBackground(Object[] params) {
-        // create the RMI server
+    // create the RMI server
         RpcServer rpcServer = new RpcServer();
     // register a service under the name rmiservice
     // the service has to implement an interface for the magic to work

