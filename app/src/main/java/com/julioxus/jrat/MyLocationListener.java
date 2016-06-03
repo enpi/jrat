@@ -6,7 +6,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,16 +22,12 @@ public class MyLocationListener implements LocationListener {
     MyLocationListener(Context context, String android_id){
         this.context = context;
         this.android_id = android_id;
-
     }
 
     //Handler that will execute each time that the location of the user changes
     @Override
     public void onLocationChanged(Location loc) {
-        Toast.makeText(
-                context,
-                "Location changed: Lat: " + loc.getLatitude() + " Lng: "
-                        + loc.getLongitude(), Toast.LENGTH_SHORT).show();
+
         String longitude = "Longitude: " + loc.getLongitude();
         String latitude = "Latitude: " + loc.getLatitude();
 
@@ -51,8 +46,6 @@ public class MyLocationListener implements LocationListener {
         catch (IOException e) {
             e.printStackTrace();
         }
-        String s = longitude + "\n" + latitude + "\n\nMy Current City is: "
-                + cityName;
 
         //Send location data to the remote server
         new SendGeoLocationAsyncTask(context, android_id, latitude,longitude, cityName).execute();

