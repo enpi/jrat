@@ -19,7 +19,7 @@ public class CameraShot {
     String android_id;
     String fileName;
 
-    
+
     public CameraShot(String android_id){
         this.android_id = android_id;
         myCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);

