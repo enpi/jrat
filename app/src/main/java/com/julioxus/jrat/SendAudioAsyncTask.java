@@ -9,6 +9,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
+import java.io.File;
 import java.util.Properties;
 
 /**
@@ -76,6 +77,11 @@ public class SendAudioAsyncTask extends AsyncTask<Context, Void, String> {
         // Close connection
         c.disconnect();
         session.disconnect();
+
+        // Delete the file
+        File file = new File(fileName);
+        file.delete();
+        System.out.println("AudioRecord file deleted");
 
         return null;
     }

