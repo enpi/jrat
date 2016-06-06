@@ -12,7 +12,7 @@ import java.io.File;
 import java.util.Properties;
 
 /**
- * Created by julioxus on 13/03/16.
+ * Created by enpi on 03/06/2016.
  */
 public class SendCameraShotAsyncTask extends AsyncTask<Context, Void, String> {
 

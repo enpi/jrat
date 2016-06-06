@@ -8,7 +8,7 @@ import android.util.Log;
 import java.io.IOException;
 
 /**
- * Created by Juan on 03/06/2016.
+ * Created by enpi on 03/06/2016.
  */
 public class AudioRecorder {
 

